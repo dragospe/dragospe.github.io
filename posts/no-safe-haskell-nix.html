@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>P. Dragos - Disabling SafeHaskell when Overriding a Haskell Package with Nix</title>
+        <link rel="stylesheet" href="../css/output.css" />
+        <link rel="stylesheet" href="../css/syntax.css" />
+    </head>
+
+    <body class="bg-[#f7f6d2]
+                 h-full  min-h-screen
+                 flex flex-col
+                 m-0 w-full">
+
+        <!-- Header w/ navbar extends across the full tops of the page -->
+        <header class="
+                       w-[90%]
+                       mx-4 justify-center
+                       text-center border-b border-black border-dashed m-2 pb-2
+                       sm:w-[60%] sm:mx-auto">
+            <div>
+                <a class="text-[20px] no-underline" href="../">P. Dragos</a>
+            </div>
+            <nav class="mt-3 flex flex-col sm:flex-row sm:justify-center sm:gap-x-4">
+                <div><a class="inline no-underline" href="../static/Peter_Dragos_CV.pdf">[CV]</a></div>
+                <div><a class="inline no-underline" href="../posts.html">[Posts]</a></div>
+                <div><a class="inline no-underline" href="../contact.html">[Contact]</a></div>
+                <div><a class="inline no-underline" href="../work-logs.html">[Work Logs]</a></div>
+            </nav>
+        </header>
+
+            <!-- Main content centered on middle 60% of page. Left side bar has the "what I'm doing" lists -->
+            <main role="main" class="
+                        <!-- General -->
+                        p-4 list-disc
+                        <!-- Small -->
+                        sm:grid sm:grid-cols-5 sm:flex-grow sm:gap-4 ">
+
+                <aside id="left-sidebar">
+                    <div class="hidden sm:ml-0 sm:block sm:border-r sm:border-black sm:border-dashed">
+                        <div class="border-b border-dashed border-black">
+                            <h2 class="italic text-left"> What I'm...</h2>
+                        </div>
+                        
+  <div class="border-b border-dashed border-black">
+     <h3 class="italic text-center mt-3">reading</h3>
+         <div class="text-sm list-disc text-left">
+             <ul>
+<li><a href="https://simonmar.github.io/pages/pcph.html">ParConc</a></li>
+<li><a href="https://edolstra.github.io/pubs/phd-thesis.pdf">Dolsta’s Thesis</a></li>
+<li><a href="https://okmij.org/ftp/tagless-final/course/lecture.pdf">Tagless Final</a></li>
+</ul>
+         </div>
+  </div>
+
+  <div class="border-b border-dashed border-black">
+     <h3 class="italic text-center mt-3">working on</h3>
+         <div class="text-sm list-disc text-left">
+             <ul>
+<li>Show And Tell</li>
+</ul>
+         </div>
+  </div>
+
+
+                    </div>
+                </aside>
+
+                <div id="main-content" class="col-span-3">
+                    <h1 class="text-[2.4rem] mx-10">Disabling SafeHaskell when Overriding a Haskell Package with Nix</h1>
+                    <article>
+    <section class="text-[1.4rem] font-italic">
+        Posted on May  1, 2025
+        
+    </section>
+    <section>
+        <h1 id="tldr-example">Tl;dr example:</h1>
+<p>Jailbreak protolude to work with GHC910 from nixpkgs <code>release-24.11</code>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode nix"><code class="sourceCode nix"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>      hs<span class="op">-</span>overlay = <span class="va">final</span><span class="op">:</span> <span class="va">prev</span><span class="op">:</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>        <span class="va">haskell</span> <span class="op">=</span> prev.haskell <span class="op">//</span> <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>          <span class="va">packageOverrides</span> <span class="op">=</span> <span class="va">hfinal</span><span class="op">:</span> <span class="va">hprev</span><span class="op">:</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>            prev.haskell.packageOverrides hfinal hprev <span class="op">//</span> <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>              <span class="co">############################################################</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>              <span class="co">## Packages that need fixing because of too-restrictive dependencies</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>              <span class="co">## Specifically, base is version 4.20.0.1 for GHC910.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>              <span class="co"># Wants base &gt;=4.6 &amp;&amp; &lt;4.20 and complains on &quot;SafeHaskell&quot; imports</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>              <span class="va">protolude</span> <span class="op">=</span> final.lib.pipe hprev.protolude <span class="op">[</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                <span class="co"># lift version bounds on dependencies</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                final.haskell.lib.compose.doJailbreak</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                <span class="op">(</span>final.haskell.lib.compose.appendConfigureFlags</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                  <span class="op">[</span> <span class="st">&quot;--ghc-option=-fno-safe-haskell&quot;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;--haddock-option=--optghc=-fno-safe-haskell&quot;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                  <span class="op">]</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                <span class="op">)</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>              <span class="op">];</span></span></code></pre></div>
+<h1 id="background-and-explanation">Background and Explanation</h1>
+<p>I’ve been working on a flake for web development in Haskell, specifically to
+make use of <a href="https://github.com/Swordlash/haskell-halogen">Halogen Haskell</a>.</p>
+<p>The features that I need are only available in GHC 9.8+, and I’m working with
+<code>release-24.11</code> of nixpkgs. So I’ve gone with the latest GHC I have available,
+which is 9.10. <code>protolude</code> first needed a <a href>jailbreak</a> to let it compile with
+<code>base-4.20.0.1</code>, and then subsequently failed with</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode hs"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">error</span><span class="op">:</span> builder for '<span class="op">/</span>nix<span class="op">/</span>store<span class="op">/</span>rianjdyai6yi3h13lrdp767jgwpr0hdb<span class="op">-</span>protolude<span class="op">-</span><span class="fl">0.3</span><span class="op">.</span><span class="dv">4</span><span class="op">.</span>drv' failed with exit code <span class="dv">1</span>;</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">last</span> <span class="dv">25</span> <span class="fu">log</span> <span class="fu">lines</span><span class="op">:</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>       <span class="op">&gt;</span>     <span class="dt">GHC.Num</span><span class="op">:</span> <span class="dt">Can't</span> be safely imported<span class="op">!</span> <span class="dt">The</span> <span class="kw">module</span> itself isn't safe<span class="op">.</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>       <span class="op">&gt;</span>    <span class="op">|</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>       <span class="op">&gt;</span> <span class="dv">38</span> <span class="op">|</span> <span class="kw">import</span> <span class="dt">GHC.Num</span> ((-))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>       <span class="op">&gt;</span>    <span class="op">|</span> <span class="op">^^^^^^^^^^^^^^^^^^^^</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>       <span class="op">&gt;</span></span></code></pre></div>
+<p>indicating that the <a href="https://wiki.haskell.org/Safe_Haskell">Safe Haskell</a> extension was causing grief.</p>
+<p>A quick perusal of the <a href="https://github.com/NixOS/nixpkgs/blob/a68c7dffbd42fe1f8cb3317b0a963f344ade9435/pkgs/development/haskell-modules/configuration-common.nix#L2199-L2204">nixpkgs haskell configuration</a>
+indicates the correct syntax for enabling the GHC option (and the corresponding haddock option) to allow the build to proceed.</p>
+<p>Hopefully this is useful to someone else. I’ll open-source the flake when it’s stabilized; give me a shout on <a href="https://pdragos.com/contact.html">matrix</a> if I forget!</p>
+    </section>
+</article>
+
+                </div>
+            </main>
+
+            <!-- Footer extends across full bottom of the page, sticky -->
+        <footer class="w-[90%] text-right border-t border-black border-dashed pt-2
+                       justify-center mx-4 mt-auto
+                       sm:w-[60%] sm:mx-auto">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            and hosted on <a href="http://nixos.org">NixOS</>
+        </footer>
+    </body>
+</html>
+

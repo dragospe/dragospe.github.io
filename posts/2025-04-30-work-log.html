@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>P. Dragos - Work Log, April 30 2025</title>
+        <link rel="stylesheet" href="../css/output.css" />
+        <link rel="stylesheet" href="../css/syntax.css" />
+    </head>
+
+    <body class="bg-[#f7f6d2]
+                 h-full  min-h-screen
+                 flex flex-col
+                 m-0 w-full">
+
+        <!-- Header w/ navbar extends across the full tops of the page -->
+        <header class="
+                       w-[90%]
+                       mx-4 justify-center
+                       text-center border-b border-black border-dashed m-2 pb-2
+                       sm:w-[60%] sm:mx-auto">
+            <div>
+                <a class="text-[20px] no-underline" href="../">P. Dragos</a>
+            </div>
+            <nav class="mt-3 flex flex-col sm:flex-row sm:justify-center sm:gap-x-4">
+                <div><a class="inline no-underline" href="../static/Peter_Dragos_CV.pdf">[CV]</a></div>
+                <div><a class="inline no-underline" href="../posts.html">[Posts]</a></div>
+                <div><a class="inline no-underline" href="../contact.html">[Contact]</a></div>
+                <div><a class="inline no-underline" href="../work-logs.html">[Work Logs]</a></div>
+            </nav>
+        </header>
+
+            <!-- Main content centered on middle 60% of page. Left side bar has the "what I'm doing" lists -->
+            <main role="main" class="
+                        <!-- General -->
+                        p-4 list-disc
+                        <!-- Small -->
+                        sm:grid sm:grid-cols-5 sm:flex-grow sm:gap-4 ">
+
+                <aside id="left-sidebar">
+                    <div class="hidden sm:ml-0 sm:block sm:border-r sm:border-black sm:border-dashed">
+                        <div class="border-b border-dashed border-black">
+                            <h2 class="italic text-left"> What I'm...</h2>
+                        </div>
+                        
+  <div class="border-b border-dashed border-black">
+     <h3 class="italic text-center mt-3">reading</h3>
+         <div class="text-sm list-disc text-left">
+             <ul>
+<li><a href="https://simonmar.github.io/pages/pcph.html">ParConc</a></li>
+<li><a href="https://edolstra.github.io/pubs/phd-thesis.pdf">Dolsta’s Thesis</a></li>
+<li><a href="https://okmij.org/ftp/tagless-final/course/lecture.pdf">Tagless Final</a></li>
+</ul>
+         </div>
+  </div>
+
+  <div class="border-b border-dashed border-black">
+     <h3 class="italic text-center mt-3">working on</h3>
+         <div class="text-sm list-disc text-left">
+             <ul>
+<li>Show And Tell</li>
+</ul>
+         </div>
+  </div>
+
+
+                    </div>
+                </aside>
+
+                <div id="main-content" class="col-span-3">
+                    <h1 class="text-[2.4rem] mx-10">Work Log, April 30 2025</h1>
+                    <article>
+    <section class="text-[1.4rem] font-italic">
+        Posted on April 30, 2025
+        
+            by Peter Dragos
+        
+    </section>
+    <section>
+        <h1 id="today">Today</h1>
+<ul>
+<li>Made some seitan. 500g VWG, 50g universal seasoning, 650g water, blasted in the food processor for a few minutes. I put it in the larger of the sous vide bags that I have. To date, I’ve got about a 50% failure rate on these after pressure cooking; today, I couldn’t even get the bag sealed in the chamber sealer. There was too much air and the bag kept mechanically pushing itself away from the seal bar. I ended up splitting the ~1kg into two blocks. One successfully went through the cooker without failure. The other I’ve frozen; I’ll see whether freezing helps with the sealing.</li>
+<li>I spent an ungodly amount of time trying to get tailwind to work, and doing some design experimentation.</li>
+<li>Learned how to write and apply overrides in nixpkgs. I noticed an issue with <code>tailwind_4</code> in nixpkgs that <a href="https://github.com/NixOS/nixpkgs/pull/402874">wasn’t actually a tailwind issue</a>. But I went through and made a <code>useWatchman</code> option anyways, before realizing that it was misplaced regardless.</li>
+<li>Dance class. I was</li>
+<li>Played chess</li>
+</ul>
+<h1 id="tomorrow">Tomorrow</h1>
+<ul>
+<li>More tailwind</li>
+<li>Hopefully more GHCJS</li>
+<li>Moving a desk and my desktop.</li>
+</ul>
+<h1 id="shoutouts">Shoutouts</h1>
+<p><a href="Musmush.world">Musmush</a> just put out their <a href="https://www.youtube.com/watch?v=y0Tfe326-4Q">2024 aftermovie</a>. I’ll be helping set up sound at their build camp end of May this year.</p>
+    </section>
+</article>
+
+                </div>
+            </main>
+
+            <!-- Footer extends across full bottom of the page, sticky -->
+        <footer class="w-[90%] text-right border-t border-black border-dashed pt-2
+                       justify-center mx-4 mt-auto
+                       sm:w-[60%] sm:mx-auto">
+            Site proudly generated by
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>
+            and hosted on <a href="http://nixos.org">NixOS</>
+        </footer>
+    </body>
+</html>
+
